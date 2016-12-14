@@ -30,6 +30,9 @@ public class CharacterConverter {
     }
 
     private static final Map<Character, Character> han2zen = new HashMap<Character, Character>() {{
+        put('!', '！');
+        put('"', '”');
+        put('#', '＃');
         put('$', '＄');
         put('%', '％');
         put('&', '＆');
