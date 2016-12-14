@@ -39,7 +39,7 @@ public class Migemo {
         try (BufferedReader br = new BufferedReader(reader)) {
             String line;
             while ((line = br.readLine()) != null) {
-                if (!line.startsWith("#") && !line.isEmpty()) {
+                if (!line.startsWith(";") && !line.isEmpty()) {
                     String[] split = line.split("\t", 2);
                     this.tree.put(split[0], split[1]);
                 }
@@ -56,11 +56,6 @@ public class Migemo {
         Objects.requireNonNull(query);
         if (query.isEmpty()) {
             throw new IllegalArgumentException();
-        }
-        for (char c : query.toCharArray()) {
-            if (!Character.isAlphabetic(c)) {
-                throw new IllegalArgumentException();
-            }
         }
         Pattern pattern = Pattern.compile("[^A-Z]+|[A-Z]{2}|[A-Z][^A-Z]+");
         List<String> queries = new ArrayList<>();
@@ -93,38 +88,17 @@ public class Migemo {
         String han = CharacterConverter.zen2han(query);
         generator.add(han);
         // 平仮名、カタカナ、及びそれによる辞書引き追加
-        String hira = RomajiConverter.roma2hira(query);
-        if (Character.isLowerCase(hira.charAt(hira.length() - 1))) {
-            for (String a : RomajiConverter.roma2hiraDubiously(query)) {
-                generator.add(a);
-                // 平仮名による辞書引き
-                for (String words : this.searchStartsWith(a).values()) {
-                    for (String word : words.split("\t")) {
-                        generator.add(word);
-                    }
-                }
-                // 片仮名文字列を生成し候補に加える
-                String kata = CharacterConverter.hira2kata(a);
-                generator.add(kata);
-                // 半角カナを生成し候補に加える
-                generator.add(CharacterConverter.zen2han(kata));
-                // カタカナによる辞書引き
-                for (String words : this.searchStartsWith(kata).values()) {
-                    for (String word : words.split("\t")) {
-                        generator.add(word);
-                    }
-                }
-            }
-        } else {
-            generator.add(hira);
+        String[] hira = RomajiConverter.roma2hiraDubiously(query);
+        for (String a : hira) {
+            generator.add(a);
             // 平仮名による辞書引き
-            for (String words : this.searchStartsWith(hira).values()) {
+            for (String words : this.searchStartsWith(a).values()) {
                 for (String word : words.split("\t")) {
                     generator.add(word);
                 }
             }
             // 片仮名文字列を生成し候補に加える
-            String kata = CharacterConverter.hira2kata(hira);
+            String kata = CharacterConverter.hira2kata(a);
             generator.add(kata);
             // 半角カナを生成し候補に加える
             generator.add(CharacterConverter.zen2han(kata));

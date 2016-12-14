@@ -12,7 +12,7 @@ public class RegexGenerator {
             this.code = code;
         }
 
-        Node add(String query, int offset) {
+        Node add(String query, int offset, boolean generated) {
             Objects.requireNonNull(query);
             char code = query.charAt(offset);
             Node node = this;
@@ -26,16 +26,21 @@ public class RegexGenerator {
                 node = new Node(code);
                 node.next = this;
                 a = true;
+            } else if (node.child == null && !generated) {
+                // codeを持つノードは有るが、その子供が無い場合、それ以降の入力パターンは破棄する
+                return this;
             }
             if (query.length() == offset + 1) {
                 // 入力パターンが尽きたら終了
                 // 入力パターンよりも長い既存パターンは破棄する
                 node.child = null;
             } else {
+                generated = false;
                 if (node.child == null) {
                     node.child = new Node(query.charAt(1 + offset));
+                    generated = true;
                 }
-                node.child = node.child.add(query, offset + 1);
+                node.child = node.child.add(query, offset + 1, generated);
             }
             return a ? node : this;
         }
@@ -58,13 +63,17 @@ public class RegexGenerator {
         if (word.isEmpty()) {
             return;
         }
+        boolean generated = false;
         if (this.node == null) {
             this.node = new Node(word.charAt(0));
+            generated = true;
         }
-        this.node = this.node.add(word, 0);
+        this.node = this.node.add(word, 0, generated);
     }
 
     private void generateStub(StringBuilder buf, Node node) {
+        String escapeCharacters = "\\.[]{}()*+-?^$|";
+        char escape = '\\';
         // 現在の階層の特性(兄弟の数、子供の数)をチェックする
         int brother = 1;
         int haschild = 0;
@@ -92,6 +101,9 @@ public class RegexGenerator {
                 if (tmp.child != null) {
                     continue;
                 }
+                if (escapeCharacters.indexOf(tmp.code) != -1) {
+                    buf.append('\\');
+                }
                 buf.append(tmp.code);
             }
             if (nochild > 1) {
@@ -109,6 +121,9 @@ public class RegexGenerator {
             for (tmp = node; tmp.child == null; tmp = tmp.next) {
             }
             while (true) {
+                if (escapeCharacters.indexOf(tmp.code) != -1) {
+                    buf.append('\\');
+                }
                 buf.append(tmp.code);
                 // 空白・改行飛ばしのパターンを挿入
                 if (this.operator.newline != null) {

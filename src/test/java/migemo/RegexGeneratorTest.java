@@ -79,4 +79,12 @@ public class RegexGeneratorTest {
         String regex = generator.generate();
         assertEquals("たのし", regex);
     }
+
+    @Test
+    public void test6() {
+        RegexGenerator generator = new RegexGenerator();
+        generator.add("a.b");
+        String regex = generator.generate();
+        assertEquals("a\\.b", regex);
+    }
 }

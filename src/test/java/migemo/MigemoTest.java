@@ -9,16 +9,14 @@ import static org.junit.Assert.*;
 public class MigemoTest {
     @Test
     public void parseQuery_abc() throws Exception {
-        Migemo migemo = new Migemo();
-        List<String> parsedQuery = migemo.parseQuery("abc");
+        List<String> parsedQuery = Migemo.parseQuery("abc");
         assertEquals(1, parsedQuery.size());
         assertEquals("abc", parsedQuery.get(0));
     }
 
     @Test
     public void parseQuery_aBc() throws Exception {
-        Migemo migemo = new Migemo();
-        List<String> parsedQuery = migemo.parseQuery("aBc");
+        List<String> parsedQuery = Migemo.parseQuery("aBc");
         assertEquals(2, parsedQuery.size());
         assertEquals("a", parsedQuery.get(0));
         assertEquals("Bc", parsedQuery.get(1));
@@ -26,8 +24,7 @@ public class MigemoTest {
 
     @Test
     public void parseQuery_ABc() throws Exception {
-        Migemo migemo = new Migemo();
-        List<String> parsedQuery = migemo.parseQuery("ABc");
+        List<String> parsedQuery = Migemo.parseQuery("ABc");
         assertEquals(2, parsedQuery.size());
         assertEquals("AB", parsedQuery.get(0));
         assertEquals("c", parsedQuery.get(1));

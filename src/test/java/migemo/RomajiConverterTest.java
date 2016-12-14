@@ -13,9 +13,21 @@ public class RomajiConverterTest {
     }
 
     @Test
-    public void roma2hira() throws Exception {
-        assertEquals("あいうえお", RomajiConverter.roma2hira("aiueo"));
-        assertEquals("っか", RomajiConverter.roma2hira("kka"));
-        assertEquals("ん", RomajiConverter.roma2hira("n"));
+    public void roma2hiraDubiously1() throws Exception {
+        String[] expected = new String[]{"あいうえお"};
+        assertArrayEquals(expected, RomajiConverter.roma2hiraDubiously("aiueo"));
+    }
+
+    @Test
+    public void roma2hiraDubiously2() throws Exception {
+        String[] expected = new String[]{"っか"};
+        assertArrayEquals(expected, RomajiConverter.roma2hiraDubiously("kka"));
+    }
+
+    @Test
+    public void roma2hiraDubiously3() throws Exception {
+        String[] expected = new String[]{"な", "に", "ぬ","ね", "の", "にゃ", "にぃ", "にゅ", "にぇ", "にょ", "ん"};
+        String[] actual = RomajiConverter.roma2hiraDubiously("n");
+        assertArrayEquals(expected, actual);
     }
 }
