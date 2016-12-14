@@ -1,10 +1,8 @@
 package migemo;
 
 import java.util.Arrays;
-import java.util.NavigableMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 
 public class RomajiConverter {
 

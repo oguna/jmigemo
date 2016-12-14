@@ -13,11 +13,12 @@ public class CharacterConverter {
     }
 
     public static String hira2kata(String source) {
-        StringBuilder sb = new StringBuilder(source.length());
-        for (char c : source.toCharArray()) {
-            sb.append(hira2kata.getOrDefault(c, c));
+        char[] chars = source.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            chars[i] = 'ぁ' <= c && c <= 'ん' ? (char) (c - 'ぁ' + 'ァ') : c;
         }
-        return sb.toString();
+        return new String(chars);
     }
 
     public static String zen2han(String source) {
@@ -183,92 +184,6 @@ public class CharacterConverter {
         put('ﾝ', 'ン');
         put('ﾞ', '゛');
         put('ﾟ', '゜');
-    }};
-
-    private static final Map<Character, Character> hira2kata = new HashMap<Character, Character>() {{
-        put('あ', 'ア');
-        put('い', 'イ');
-        put('う', 'ウ');
-        put('え', 'エ');
-        put('お', 'オ');
-        put('か', 'カ');
-        put('き', 'キ');
-        put('く', 'ク');
-        put('け', 'ケ');
-        put('こ', 'コ');
-        put('さ', 'サ');
-        put('し', 'シ');
-        put('す', 'ス');
-        put('せ', 'セ');
-        put('そ', 'ソ');
-        put('た', 'タ');
-        put('ち', 'チ');
-        put('つ', 'ツ');
-        put('て', 'テ');
-        put('と', 'ト');
-        put('な', 'ナ');
-        put('に', 'ニ');
-        put('ぬ', 'ヌ');
-        put('ね', 'ネ');
-        put('の', 'ノ');
-        put('は', 'ハ');
-        put('ひ', 'ヒ');
-        put('ふ', 'フ');
-        put('へ', 'ヘ');
-        put('ほ', 'ホ');
-        put('ま', 'マ');
-        put('み', 'ミ');
-        put('む', 'ム');
-        put('め', 'メ');
-        put('も', 'モ');
-        put('や', 'ヤ');
-        put('ゆ', 'ユ');
-        put('よ', 'ヨ');
-        put('ら', 'ラ');
-        put('り', 'リ');
-        put('る', 'ル');
-        put('れ', 'レ');
-        put('ろ', 'ロ');
-        put('わ', 'ワ');
-        put('ゐ', 'ヰ');
-        put('ゑ', 'ヱ');
-        put('を', 'ヲ');
-        put('が', 'ガ');
-        put('ぎ', 'ギ');
-        put('ぐ', 'グ');
-        put('げ', 'ゲ');
-        put('ご', 'ゴ');
-        put('ざ', 'ザ');
-        put('じ', 'ジ');
-        put('ず', 'ズ');
-        put('ぜ', 'ゼ');
-        put('ぞ', 'ゾ');
-        put('だ', 'ダ');
-        put('ぢ', 'ヂ');
-        put('づ', 'ヅ');
-        put('で', 'デ');
-        put('ど', 'ド');
-        put('ば', 'バ');
-        put('び', 'ビ');
-        put('ぶ', 'ブ');
-        put('べ', 'ベ');
-        put('ぼ', 'ボ');
-        put('ぱ', 'パ');
-        put('ぴ', 'ピ');
-        put('ぷ', 'プ');
-        put('ぺ', 'ペ');
-        put('ぽ', 'ポ');
-        put('ぁ', 'ァ');
-        put('ぃ', 'ィ');
-        put('ぅ', 'ゥ');
-        put('ぇ', 'ェ');
-        put('ぉ', 'ォ');
-        put('ゃ', 'ャ');
-        put('ゅ', 'ュ');
-        put('ょ', 'ョ');
-        put('ん', 'ン');
-        put('っ', 'ッ');
-        put('ゎ', 'ヮ');
     }};
 
     private static final Map<Character, String> zen2han = new HashMap<Character, String>() {{
