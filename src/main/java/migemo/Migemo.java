@@ -94,7 +94,7 @@ public class Migemo {
         generator.add(han);
         // 平仮名、カタカナ、及びそれによる辞書引き追加
         String hira = RomajiConverter.roma2hira(query);
-        if (hira.matches("[^a-z]$")) {
+        if (Character.isLowerCase(hira.charAt(hira.length() - 1))) {
             for (String a : RomajiConverter.roma2hiraDubiously(query)) {
                 generator.add(a);
                 // 平仮名による辞書引き

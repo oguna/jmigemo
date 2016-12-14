@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 public class RomajiConverter {
 
-    private final static String FIXKEY_NONXTU = "aiueon";
+    private final static String VOWELS = "aiueon";
 
     public static String roma2hira(String source) {
         if (source == null) {
@@ -22,7 +22,7 @@ public class RomajiConverter {
                 return value + roma2hira(source.substring(i));
             }
         }
-        if (source.length() >= 2 && source.charAt(0) == source.charAt(1) && !FIXKEY_NONXTU.contains(source.substring(0, 1))) {
+        if (source.length() >= 2 && source.charAt(0) == source.charAt(1) && !VOWELS.contains(source.substring(0, 1))) {
             // 「っ」の判定
             return "っ" + roma2hira(source.substring(1));
         } else if (source.charAt(0) == 'n') {
@@ -47,7 +47,8 @@ public class RomajiConverter {
                 return concat(value, roma2hiraDubiously(source.substring(i)));
             }
         }
-        if (source.length() >= 2 && source.charAt(0) == source.charAt(1) && !FIXKEY_NONXTU.contains(source.substring(0, 1))) {
+        if (source.length() >= 2 && source.charAt(0) == source.charAt(1) &&
+                VOWELS.indexOf(source.charAt(0)) == -1 && Character.isLowerCase(source.charAt(0))) {
             // 「っ」の判定
             return concat("っ", roma2hiraDubiously(source.substring(1)));
         } else if (source.charAt(0) == 'n') {
@@ -58,7 +59,17 @@ public class RomajiConverter {
             if (subtree.isEmpty()) {
                 return concat(source.substring(0, 1), roma2hiraDubiously(source.substring(1)));
             } else {
-                return subtree.values().toArray(new String[0]);
+                if (Character.isLetter(source.charAt(0)) && VOWELS.indexOf(source.charAt(0)) == -1) {
+                    // 「っ{元の子音}{母音}」を補ってみる
+                    String[] a = concat("っ", subtree.values().toArray(new String[0]));
+                    String[] b = subtree.values().toArray(new String[0]);
+                    String[] c = new String[a.length + b.length];
+                    System.arraycopy(a, 0, c, 0, a.length);
+                    System.arraycopy(b, 0, c, a.length, b.length);
+                    return c;
+                } else {
+                    return subtree.values().toArray(new String[0]);
+                }
             }
         }
         return concat(source.substring(0, 1), roma2hiraDubiously(source.substring(1)));
