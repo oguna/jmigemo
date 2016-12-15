@@ -1,3 +1,1 @@
 # J/Migemo
-
-in development..
