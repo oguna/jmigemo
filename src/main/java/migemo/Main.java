@@ -121,12 +121,13 @@ public class Main {
         }
         // サブ辞書を読み込む
         if (subdicts.size() > 0) {
-            for (String subdict : subdicts) {
-                migemo.load(new File(subdict));
-                if (word != null && !mode_quiet) {
-                    fplog.printf("migemo_load(%s, \"%s\")\n", migemo, subdict);
-                }
-            }
+            throw new UnsupportedOperationException();
+            //for (String subdict : subdicts) {
+            //    migemo.load(new File(subdict));
+            //    if (word != null && !mode_quiet) {
+            //        fplog.printf("migemo_load(%s, \"%s\")\n", migemo, subdict);
+            //    }
+            //}
         }
 
         if (mode_vim) {

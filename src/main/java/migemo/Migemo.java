@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 public class Migemo {
     public final static String VERSION = "1.3";
 
-    private final TreeMap<String, String> tree = new TreeMap<>();
+    private final String[] keys;
+    private final String[] values;
     private RegexOperator operator = RegexOperator.DEFAULT;
 
     /**
@@ -16,35 +17,32 @@ public class Migemo {
      * dictで指定したファイルがmigemo-dict辞書として
      * オブジェクト作成時に読み込まれる。
      */
-    public Migemo() {
-        try (InputStream is = Migemo.class.getResourceAsStream("/migemo-dict");
-             InputStreamReader isr = new InputStreamReader(is)) {
-            load(isr);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Migemo() throws IOException {
+        this(Migemo.class.getResourceAsStream("/migemo-dict"));
     }
 
     public Migemo(File dict) throws IOException {
-        this.load(dict);
+        this(new FileInputStream(Objects.requireNonNull(dict)));
     }
 
-    public void load(File file) throws IOException {
-        Objects.requireNonNull(file);
-        this.load(new FileReader(file));
-    }
-
-    public void load(Reader reader) throws IOException {
-        Objects.requireNonNull(reader);
-        try (BufferedReader br = new BufferedReader(reader)) {
+    public Migemo(InputStream is) {
+        Objects.requireNonNull(is);
+        List<Map.Entry<String, String>> dict = new ArrayList<>();
+        try (InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr)) {
             String line;
             while ((line = br.readLine()) != null) {
                 if (!line.startsWith(";") && !line.isEmpty()) {
                     String[] split = line.split("\t", 2);
-                    this.tree.put(split[0], split[1]);
+                    dict.add(new AbstractMap.SimpleImmutableEntry<>(split[0], split[1]));
                 }
             }
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
+        dict.sort(Comparator.comparing(Map.Entry::getKey));
+        this.keys = dict.stream().map(Map.Entry::getKey).toArray(String[]::new);
+        this.values = dict.stream().map(Map.Entry::getValue).toArray(String[]::new);
     }
 
     /**
@@ -76,7 +74,7 @@ public class Migemo {
         generator.add(query);
         // queryそのものでの辞書引き
         String lower = query.toLowerCase();
-        for (String words : this.searchStartsWith(lower).values()) {
+        for (String words : this.predictiveSearch(lower)) {
             for (String word : words.split("\t")) {
                 generator.add(word);
             }
@@ -92,7 +90,7 @@ public class Migemo {
         for (String a : hira) {
             generator.add(a);
             // 平仮名による辞書引き
-            for (String words : this.searchStartsWith(a).values()) {
+            for (String words : this.predictiveSearch(a)) {
                 for (String word : words.split("\t")) {
                     generator.add(word);
                 }
@@ -103,7 +101,7 @@ public class Migemo {
             // 半角カナを生成し候補に加える
             generator.add(CharacterConverter.zen2han(kata));
             // カタカナによる辞書引き
-            for (String words : this.searchStartsWith(kata).values()) {
+            for (String words : this.predictiveSearch(kata)) {
                 for (String word : words.split("\t")) {
                     generator.add(word);
                 }
@@ -140,13 +138,21 @@ public class Migemo {
     }
 
     /**
-     * 指定したキーで始まる単語のよみと漢字リストのエントリを検索しそのビューを返す
+     * 指定したキーで始まる単語のよみを持つ漢字リストのエントリを検索しそのビューを返す
      * @param hiragana キー
-     * @return 検索結果のエントリへのビュー
+     * @return 配列で表した検索結果の漢字リスト
      */
-    private SortedMap<String, String> searchStartsWith(String hiragana) {
+    private String[] predictiveSearch(String hiragana) {
         String stop = hiragana.substring(0, hiragana.length() - 1) + (char)(hiragana.charAt(hiragana.length() - 1) + 1);
-        return this.tree.subMap(hiragana, stop);
+        int startPos = Arrays.binarySearch(this.keys, hiragana);
+        if (startPos < 0) {
+            startPos = -(startPos + 1);
+        }
+        int endPos = Arrays.binarySearch(this.keys, stop);
+        if (endPos < 0) {
+            endPos = -(endPos + 1);
+        }
+        return Arrays.copyOfRange(this.values, startPos, endPos);
     }
 
     public void setOperator(RegexOperator operator) {
