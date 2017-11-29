@@ -54,7 +54,6 @@ public class Main {
         List<String> subdicts = new ArrayList<>();
         String dict = null;
         String word = null;
-        Migemo migemo;
         PrintStream fplog = System.out;
         String prgname = Migemo.class.getSimpleName();
         for (int i = 0; i < args.length; i++) {
@@ -96,39 +95,44 @@ public class Main {
             }
         }
 
+        Migemo migemo = new Migemo();
+
         // 辞書をカレントディレクトリと1つ上のディレクトリから捜す
+        MigemoDictionary dictionary = new MigemoDictionary();
         if (dict == null) {
-            File currentDirDict = new File("./dict/");
-            File parentDirDict = new File("../dict/");
+            File currentDirDict = new File("./dict/" + DICT_NAME);
+            File parentDirDict = new File("../dict/" + DICT_NAME);
             if (currentDirDict.exists()) {
-                migemo = new Migemo(currentDirDict);
+                dictionary.load(currentDirDict);
                 if (word == null && !mode_quiet) {
                     fplog.printf("migemo_open(%s)=%s\n", "./dict/" + DICT_NAME, migemo);
                 }
             } else if (parentDirDict.exists()) {
-                migemo = new Migemo(parentDirDict);
+                dictionary.load(parentDirDict);
                 if (word == null && !mode_quiet) {
                     fplog.printf("migemo_open(\"%s\")=%s\n", "../dict/" + DICT_NAME, migemo);
                 }
             } else {
-                migemo = new Migemo();
+                dictionary.loadDefault();
             }
         } else {
-            migemo = new Migemo(new File(dict));
+            dictionary.load(new File(dict));
             if (word == null && !mode_quiet) {
                 fplog.printf("migemo_open(%s)=%s\n", dict, migemo);
             }
         }
         // サブ辞書を読み込む
         if (subdicts.size() > 0) {
-            throw new UnsupportedOperationException();
-            //for (String subdict : subdicts) {
-            //    migemo.load(new File(subdict));
-            //    if (word != null && !mode_quiet) {
-            //        fplog.printf("migemo_load(%s, \"%s\")\n", migemo, subdict);
-            //    }
-            //}
+            for (String subdict : subdicts) {
+                dictionary.load(new File(subdict));
+                if (word != null && !mode_quiet) {
+                    fplog.printf("migemo_load(%s, \"%s\")\n", migemo, subdict);
+                }
+            }
         }
+
+        dictionary.build();
+        migemo.setDictionary(dictionary);
 
         if (mode_vim) {
             if (mode_nonewline) {
