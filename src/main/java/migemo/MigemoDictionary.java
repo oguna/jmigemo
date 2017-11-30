@@ -10,6 +10,7 @@ public class MigemoDictionary {
     private String[] keys;
     private String[] values;
     private TreeMap<String, String> tempDictionary = new TreeMap<>();
+    private MigemoCompactDictionary compactDictionary = null;
 
     public void load(File file) throws IOException {
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -18,8 +19,9 @@ public class MigemoDictionary {
     }
 
     public void loadDefault() {
-        try (InputStream is = MigemoDictionary.class.getResourceAsStream("/migemo-dict")) {
-            load(is);
+        try (InputStream is = MigemoDictionary.class.getResourceAsStream("/migemo-compact-dict");
+             BufferedInputStream bis = new BufferedInputStream(is)) {
+            this.compactDictionary = new MigemoCompactDictionary(bis);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -65,15 +67,33 @@ public class MigemoDictionary {
      * @return 配列で表した検索結果の漢字リスト
      */
     public String[] predictiveSearch(String hiragana) {
-        String stop = hiragana.substring(0, hiragana.length() - 1) + (char)(hiragana.charAt(hiragana.length() - 1) + 1);
-        int startPos = Arrays.binarySearch(this.keys, hiragana);
-        if (startPos < 0) {
-            startPos = -(startPos + 1);
+        String[] compactDictResults;
+        if (compactDictionary != null) {
+            compactDictResults = compactDictionary.predictiveSearch(hiragana);
+            if (compactDictResults == null) {
+                compactDictResults = new String[0];
+            }
+        } else {
+            compactDictResults = new String[0];
         }
-        int endPos = Arrays.binarySearch(this.keys, stop);
-        if (endPos < 0) {
-            endPos = -(endPos + 1);
+        String[] userDictResults;
+        if (keys.length > 0) {
+            String stop = hiragana.substring(0, hiragana.length() - 1) + (char) (hiragana.charAt(hiragana.length() - 1) + 1);
+            int startPos = Arrays.binarySearch(this.keys, hiragana);
+            if (startPos < 0) {
+                startPos = -(startPos + 1);
+            }
+            int endPos = Arrays.binarySearch(this.keys, stop);
+            if (endPos < 0) {
+                endPos = -(endPos + 1);
+            }
+            userDictResults = Arrays.copyOfRange(this.values, startPos, endPos);
+        } else {
+            userDictResults = new String[0];
         }
-        return Arrays.copyOfRange(this.values, startPos, endPos);
+        String[] results = new String[compactDictResults.length + userDictResults.length];
+        System.arraycopy(compactDictResults, 0, results, 0, compactDictResults.length);
+        System.arraycopy(userDictResults, 0, results, compactDictResults.length, userDictResults.length);
+        return results;
     }
 }
