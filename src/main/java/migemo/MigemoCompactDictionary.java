@@ -83,7 +83,7 @@ public class MigemoCompactDictionary {
     }
 
     public static void main(String[] args) throws IOException {
-        build(new FileReader(new File(args[0])));
+        //build(new FileReader(new File(args[0])));
         long start = System.currentTimeMillis();
         MigemoCompactDictionary dic = new MigemoCompactDictionary(new BufferedInputStream(new FileInputStream("migemo-compact-dict")));
         long end = System.currentTimeMillis();

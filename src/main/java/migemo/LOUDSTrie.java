@@ -72,7 +72,6 @@ public class LOUDSTrie {
         }
         int childPos = bitVector.select(child, true);
         while (bitVector.get(childPos)) {
-            visitor.accept(child);
             visitDepthFirst(child, visitor);
             child++;
             childPos++;
