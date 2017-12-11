@@ -21,7 +21,7 @@ public class Migemo {
         if (query.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Pattern pattern = Pattern.compile("[^A-Z]+|[A-Z]{2}|[A-Z][^A-Z]+");
+        Pattern pattern = Pattern.compile("[^A-Z\\s]+|[A-Z]{2,}|[A-Z][^A-Z\\s]+");
         List<String> queries = new ArrayList<>();
         Matcher matcher = pattern.matcher(query);
         while (matcher.find()) {
@@ -52,7 +52,7 @@ public class Migemo {
         String han = CharacterConverter.zen2han(query);
         generator.add(han);
         // 平仮名、カタカナ、及びそれによる辞書引き追加
-        String[] hira = RomajiConverter.roma2hiraDubiously(query);
+        String[] hira = RomajiConverter.roma2hiraDubiously(query.toLowerCase());
         for (String a : hira) {
             generator.add(a);
             // 平仮名による辞書引き
