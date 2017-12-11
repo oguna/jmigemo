@@ -41,6 +41,14 @@ public class MigemoTest {
     }
 
     @Test
+    public void parseQuery_aA() {
+        List<String> parsedQuery = Migemo.parseQuery("aA");
+        assertEquals(2, parsedQuery.size());
+        assertEquals("a", parsedQuery.get(0));
+        assertEquals("A", parsedQuery.get(1));
+    }
+
+    @Test
     public void queryKikai() throws Exception {
         Migemo migemo = createMigemo();
         String regex = migemo.query("kikai");

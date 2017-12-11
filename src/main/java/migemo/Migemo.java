@@ -21,7 +21,7 @@ public class Migemo {
         if (query.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Pattern pattern = Pattern.compile("[^A-Z\\s]+|[A-Z]{2,}|[A-Z][^A-Z\\s]+");
+        Pattern pattern = Pattern.compile("[^A-Z\\s]+|[A-Z]{2,}|([A-Z][^A-Z\\s]+)|([A-Z]\\s*$)");
         List<String> queries = new ArrayList<>();
         Matcher matcher = pattern.matcher(query);
         while (matcher.find()) {
