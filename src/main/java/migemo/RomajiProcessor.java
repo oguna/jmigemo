@@ -44,7 +44,7 @@ public class RomajiProcessor {
             if (lastFound >= 0) {
                 RomanEntry entry = ROMAN_ENTRIES[lastFound];
                 hiragana.append(entry.hiragana);
-                start = end - 1 - entry.remain;
+                start = start + entry.roman.length() - entry.remain;
                 end = start + 1;
             } else {
                 hiragana.append(romaji.charAt(start));
@@ -102,7 +102,7 @@ public class RomajiProcessor {
             if (lastFound >= 0) {
                 RomanEntry entry = ROMAN_ENTRIES[lastFound];
                 hiragana.append(entry.hiragana);
-                start = end - 1 - entry.remain;
+                start = start + entry.roman.length() - entry.remain;
                 end = start + 1;
             } else {
                 hiragana.append(romaji.charAt(start));
