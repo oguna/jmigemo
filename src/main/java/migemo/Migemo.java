@@ -1,6 +1,5 @@
 package migemo;
 
-import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,7 +50,7 @@ public class Migemo {
         generator.add(han);
         // 平仮名、カタカナ、及びそれによる辞書引き追加
         RomajiProcessor.RomajiPredictiveResult hiraganaResult = RomajiProcessor.romajiToHiraganaPredictively(query.toLowerCase());
-        String[] hira = hiraganaResult.predictiveHiragana.stream().map(e -> hiraganaResult.establishedHiragana + e).toArray(String[]::new);
+        String[] hira = hiraganaResult.predictiveSuffixes.stream().map(e -> hiraganaResult.establishedHiragana + e).toArray(String[]::new);
         for (String a : hira) {
             generator.add(a);
             // 平仮名による辞書引き

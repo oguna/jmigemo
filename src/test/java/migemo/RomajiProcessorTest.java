@@ -22,19 +22,19 @@ public class RomajiProcessorTest {
     public void romajiToHiraganaPredictively() {
         RomajiProcessor.RomajiPredictiveResult kiku = RomajiProcessor.romajiToHiraganaPredictively("kiku");
         assertEquals("き", kiku.establishedHiragana);
-        assertThat(kiku.predictiveHiragana, hasItem("く"));
+        assertThat(kiku.predictiveSuffixes, hasItem("く"));
 
         RomajiProcessor.RomajiPredictiveResult ky = RomajiProcessor.romajiToHiraganaPredictively("ky");
         assertEquals("", ky.establishedHiragana);
-        assertThat(ky.predictiveHiragana, hasItems("きゃ", "きぃ", "きぇ", "きゅ", "きょ"));
+        assertThat(ky.predictiveSuffixes, hasItems("きゃ", "きぃ", "きぇ", "きゅ", "きょ"));
 
         RomajiProcessor.RomajiPredictiveResult kky = RomajiProcessor.romajiToHiraganaPredictively("k");
         assertEquals("", kky.establishedHiragana);
-        assertThat(kky.predictiveHiragana, hasItems("っきゃ", "っきぃ", "っきぇ", "っきゅ", "っきょ"));
+        assertThat(kky.predictiveSuffixes, hasItems("っきゃ", "っきぃ", "っきぇ", "っきゅ", "っきょ"));
 
         RomajiProcessor.RomajiPredictiveResult n = RomajiProcessor.romajiToHiraganaPredictively("n");
         assertEquals("", n.establishedHiragana);
-        assertThat(n.predictiveHiragana, hasItems("ん", "な", "に", "ぬ", "ね", "の", "にゃ", "にゅ", "にょ"));
-        assertThat(n.predictiveHiragana, not(hasItem(containsString("っ"))));
+        assertThat(n.predictiveSuffixes, hasItems("ん", "な", "に", "ぬ", "ね", "の", "にゃ", "にゅ", "にょ"));
+        assertThat(n.predictiveSuffixes, not(hasItem(containsString("っ"))));
     }
 }

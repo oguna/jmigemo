@@ -6,11 +6,11 @@ public class RomajiProcessor {
 
     public static class RomajiPredictiveResult {
         public final String establishedHiragana;
-        public final Set<String> predictiveHiragana;
+        public final Set<String> predictiveSuffixes;
 
-        public RomajiPredictiveResult(String establishedHiragana, Set<String> predictiveHiragana) {
+        public RomajiPredictiveResult(String establishedHiragana, Set<String> predictiveSuffixes) {
             this.establishedHiragana = establishedHiragana;
-            this.predictiveHiragana = predictiveHiragana;
+            this.predictiveSuffixes = predictiveSuffixes;
         }
     }
 
