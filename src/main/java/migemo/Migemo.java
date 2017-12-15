@@ -67,12 +67,6 @@ public class Migemo {
             generator.add(kata);
             // 半角カナを生成し候補に加える
             generator.add(CharacterConverter.zen2han(kata));
-            // カタカナによる辞書引き
-            for (String words : this.dictionary.predictiveSearch(kata)) {
-                for (String word : words.split("\t")) {
-                    generator.add(word);
-                }
-            }
         }
         return generator.generate();
     }
