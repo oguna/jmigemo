@@ -1,10 +1,7 @@
 package migemo;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
+import java.util.*;
 
 public class MigemoDictionary {
     private String[] keys;
@@ -76,7 +73,7 @@ public class MigemoDictionary {
         } else {
             compactDictResults = new String[0];
         }
-        String[] userDictResults;
+        List<String> userDictResults;
         if (keys.length > 0) {
             String stop = hiragana.substring(0, hiragana.length() - 1) + (char) (hiragana.charAt(hiragana.length() - 1) + 1);
             int startPos = Arrays.binarySearch(this.keys, hiragana);
@@ -87,13 +84,19 @@ public class MigemoDictionary {
             if (endPos < 0) {
                 endPos = -(endPos + 1);
             }
-            userDictResults = Arrays.copyOfRange(this.values, startPos, endPos);
+            List<String> userDictItems = new ArrayList<>();
+            for (int i = startPos; i < endPos; i++) {
+                userDictItems.addAll(Arrays.asList(this.values[i].split("\t")));
+            }
+            userDictResults = userDictItems;
         } else {
-            userDictResults = new String[0];
+            userDictResults = Collections.emptyList();
         }
-        String[] results = new String[compactDictResults.length + userDictResults.length];
+        String[] results = new String[compactDictResults.length + userDictResults.size()];
         System.arraycopy(compactDictResults, 0, results, 0, compactDictResults.length);
-        System.arraycopy(userDictResults, 0, results, compactDictResults.length, userDictResults.length);
+        for (int i = 0; i < userDictResults.size(); i++) {
+            results[compactDictResults.length + i] = userDictResults.get(i);
+        }
         return results;
     }
 }

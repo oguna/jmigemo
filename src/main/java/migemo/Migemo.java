@@ -40,10 +40,8 @@ public class Migemo {
         generator.add(query);
         // queryそのものでの辞書引き
         String lower = query.toLowerCase();
-        for (String words : this.dictionary.predictiveSearch(lower)) {
-            for (String word : words.split("\t")) {
-                generator.add(word);
-            }
+        for (String word : this.dictionary.predictiveSearch(lower)) {
+            generator.add(word);
         }
         // queryを全角にして候補に加える
         String zen = CharacterConverter.han2zen(query);
@@ -57,10 +55,8 @@ public class Migemo {
         for (String a : hira) {
             generator.add(a);
             // 平仮名による辞書引き
-            for (String words : this.dictionary.predictiveSearch(a)) {
-                for (String word : words.split("\t")) {
-                    generator.add(word);
-                }
+            for (String word : this.dictionary.predictiveSearch(a)) {
+                generator.add(word);
             }
             // 片仮名文字列を生成し候補に加える
             String kata = CharacterConverter.hira2kata(a);
