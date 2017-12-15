@@ -88,6 +88,14 @@ public class MigemoTest {
         assertTrue(pattern.matcher("連文節の検索").matches());
     }
 
+    @Test
+    public void testNihonN() {
+        Migemo migemo = createMigemo();
+        String regex = migemo.query("nihon n");
+        Pattern pattern = Pattern.compile(regex);
+        assertTrue(pattern.matcher("日本の").matches());
+    }
+
     private static Migemo createMigemo() {
         Migemo migemo = new Migemo();
         MigemoDictionary dictionary = new MigemoDictionary();

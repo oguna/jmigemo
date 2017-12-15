@@ -52,7 +52,8 @@ public class Migemo {
         String han = CharacterConverter.zen2han(query);
         generator.add(han);
         // 平仮名、カタカナ、及びそれによる辞書引き追加
-        String[] hira = RomajiConverter.roma2hiraDubiously(query.toLowerCase());
+        RomajiProcessor.RomajiPredictiveResult hiraganaResult = RomajiProcessor.romajiToHiraganaPredictively(query.toLowerCase());
+        String[] hira = hiraganaResult.predictiveHiragana.stream().map(e -> hiraganaResult.establishedHiragana + e).toArray(String[]::new);
         for (String a : hira) {
             generator.add(a);
             // 平仮名による辞書引き

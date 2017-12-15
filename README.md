@@ -11,6 +11,8 @@ QUERY: yuubink
 PATTERN: (郵便([区局]|小(包|為替)|口座|切手|為替)|ﾕｳﾋﾞﾝ([ｸｺｷｹｶ]|ｯ[ｸｺｷｹｶ])|ユウビン([クコキケカ]|ッ[クコキケカ])|ゆうびん([くこきけか]|っ[くこきけか])|ｙｕｕｂｉｎｋ|yuubink)
 ```
 
+You can also search a sequence of phrases
+
 ## License
 
 All java code in this project are under **Public Domain (CC0)**.
