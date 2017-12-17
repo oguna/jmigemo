@@ -82,7 +82,7 @@ public class RomajiProcessor {
                 }
                 end++;
             }
-            if (end > romaji.length()) {
+            if (end > romaji.length() && upper - lower != 1) {
                 Set<String> set = new HashSet<>();
                 for (int i = lower; i < upper; i++) {
                     RomanEntry re = ROMAN_ENTRIES[i];

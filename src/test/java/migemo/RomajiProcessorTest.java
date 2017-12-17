@@ -21,8 +21,8 @@ public class RomajiProcessorTest {
     @Test
     public void romajiToHiraganaPredictively() {
         RomajiProcessor.RomajiPredictiveResult kiku = RomajiProcessor.romajiToHiraganaPredictively("kiku");
-        assertEquals("き", kiku.establishedHiragana);
-        assertThat(kiku.predictiveSuffixes, hasItem("く"));
+        assertEquals("きく", kiku.establishedHiragana);
+        assertThat(kiku.predictiveSuffixes, hasItem(""));
 
         RomajiProcessor.RomajiPredictiveResult ky = RomajiProcessor.romajiToHiraganaPredictively("ky");
         assertEquals("", ky.establishedHiragana);
