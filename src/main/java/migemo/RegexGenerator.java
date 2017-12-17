@@ -89,13 +89,13 @@ public class RegexGenerator {
 
         // 必要ならば()によるグルーピング
         if (brother > 1 && haschild > 0) {
-            buf.append(this.operator.nestIn);
+            buf.append(this.operator.beginGroup);
         }
 
         // 子の無いノードを先に[]によりグルーピング
         if (nochild > 0) {
             if (nochild > 1) {
-                buf.append(this.operator.selectIn);
+                buf.append(this.operator.beginClass);
             }
             for (Node tmp = node; tmp != null; tmp = tmp.next) {
                 if (tmp.child != null) {
@@ -107,7 +107,7 @@ public class RegexGenerator {
                 buf.append(tmp.code);
             }
             if (nochild > 1) {
-                buf.append(this.operator.selectOut);
+                buf.append(this.operator.endClass);
             }
         }
 
@@ -142,7 +142,7 @@ public class RegexGenerator {
         }
         // 必要ならば()によるグルーピング
         if (brother > 1 && haschild > 0) {
-            buf.append(this.operator.nestOut);
+            buf.append(this.operator.endGroup);
         }
     }
 
