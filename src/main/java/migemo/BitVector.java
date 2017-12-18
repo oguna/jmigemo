@@ -127,18 +127,6 @@ public class BitVector {
         }
     }
 
-    public int nextSetBit(int fromIndex) {
-        int u = fromIndex >> 6;
-        long word = words[u] & (0xffffffffffffffffL << fromIndex);
-        while (true) {
-            if (word != 0)
-                return (u * 64) + Long.numberOfTrailingZeros(word);
-            if (++u == words.length)
-                return -1;
-            word = words[u];
-        }
-    }
-
     public long[] toLongArray() {
         return Arrays.copyOf(this.words, this.words.length);
     }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
-import java.util.function.IntConsumer;
 
 public class LOUDSTrie {
     public final BitVector bitVector;
@@ -64,18 +63,54 @@ public class LOUDSTrie {
         return (nodeIndex >= 0) ? nodeIndex : -1;
    }
 
-    public void visitDepthFirst(int index, IntConsumer visitor) {
-        visitor.accept(index);
-        int child = firstChild(index);
-        if (child  == -1) {
-            return;
-        }
-        int childPos = bitVector.select(child, true);
-        while (bitVector.get(childPos)) {
-            visitDepthFirst(child, visitor);
-            child++;
-            childPos++;
-        }
+    public PrimitiveIterator.OfInt iterator(int index) {
+        // upper 32 bit = node index
+        // lower 32 bit = bit position
+        int pos = bitVector.select(index, true);
+        long[] initialStack = new long[16];
+        initialStack[0] = (long) index << 32 | pos;
+        return new PrimitiveIterator.OfInt() {
+            private long[] stack = initialStack;
+            private int stackPointer = 0;
+            @Override
+            public int nextInt() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                long pair = stack[stackPointer];
+                int currentIndex = (int)(pair >> 32);
+                int currentPos = (int)pair;
+                int fistChild = firstChild(currentIndex);
+                if (fistChild != -1) {
+                    if (stackPointer >= stack.length - 1) {
+                        stack = Arrays.copyOf(stack, stack.length * 2);
+                    }
+                    int fistChildPos = bitVector.select(fistChild, true);
+                    stack[++stackPointer] = (long)fistChild << 32 | fistChildPos;
+                    return currentIndex;
+                }
+                if (bitVector.get(currentPos + 1) && stackPointer > 0) {
+                    stack[stackPointer] = (long)(currentIndex + 1) << 32 | (currentPos + 1);
+                    return currentIndex;
+                }
+                while (stackPointer > 1) {
+                    long parentPair = stack[--stackPointer];
+                    int parentIndex = (int)(parentPair >> 32);
+                    int parentPos = (int)parentPair;
+                    if (bitVector.get(parentPos + 1)) {
+                        stack[stackPointer] = (long)(parentIndex + 1) << 32 | (parentPos + 1);
+                        return currentIndex;
+                    }
+                }
+                stackPointer = -1;
+                return currentIndex;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return stackPointer >= 0;
+            }
+        };
     }
 
     public PrimitiveIterator.OfInt commonPrefixSearch(String key) {

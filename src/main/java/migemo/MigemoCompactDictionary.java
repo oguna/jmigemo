@@ -67,7 +67,8 @@ public class MigemoCompactDictionary {
         int keyIndex = keyTrie.get(key);
         if (keyIndex != -1) {
             List<String> result = new ArrayList<>();
-            keyTrie.visitDepthFirst(keyIndex, e -> {
+            for (PrimitiveIterator.OfInt it = keyTrie.iterator(keyIndex); it.hasNext();) {
+                int e = it.nextInt();
                 int valueStartPos = mappingBitVector.select(e, false);
                 int valueEndPos = mappingBitVector.nextClearBit(valueStartPos + 1);
                 int size = valueEndPos - valueStartPos - 1;
@@ -75,7 +76,7 @@ public class MigemoCompactDictionary {
                 for (int i = 0; i < size; i++) {
                     result.add(valueTrie.getKey(mapping[valueStartPos - offset + i]));
                 }
-            });
+            }
             return result.toArray(new String[0]);
         } else {
             return null;
