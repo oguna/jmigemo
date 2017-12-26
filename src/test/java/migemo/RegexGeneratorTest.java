@@ -31,7 +31,7 @@ public class RegexGeneratorTest {
             generator.add(word);
         }
         String regex = generator.generate();
-        assertEquals("(dad|bad)", regex);
+        assertEquals("(bad|dad)", regex);
     }
 
     @Test
@@ -42,7 +42,7 @@ public class RegexGeneratorTest {
             generator.add(word);
         }
         String regex = generator.generate();
-        assertEquals("ba[td]", regex);
+        assertEquals("ba[dt]", regex);
     }
 
 
@@ -54,7 +54,7 @@ public class RegexGeneratorTest {
             generator.add(word);
         }
         String regex = generator.generate();
-        assertEquals("[ba]", regex);
+        assertEquals("[ab]", regex);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class RegexGeneratorTest {
             generator.add(word);
         }
         String regex = generator.generate();
-        assertEquals("あか", regex);
+        assertEquals("あか(い|るい)", regex);
     }
 
 
@@ -77,7 +77,7 @@ public class RegexGeneratorTest {
             generator.add(word);
         }
         String regex = generator.generate();
-        assertEquals("たのし", regex);
+        assertEquals("たのし[いみ]", regex);
     }
 
     @Test
