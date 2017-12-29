@@ -15,18 +15,44 @@ public class Migemo {
      * 文節の切れ目は通常アルファベットの大文字。
      * 文節が複数文字の大文字で始まった文節は非大文字を区切りとする。
      */
-    static List<String> parseQuery(String query) {
+    static Iterator<String> parseQuery(String query) {
         Objects.requireNonNull(query);
-        if (query.isEmpty()) {
-            throw new IllegalArgumentException();
+        int start = 0;
+        while (start < query.length() && Character.isSpaceChar(query.charAt(start))) {
+            start++;
         }
-        Pattern pattern = Pattern.compile("[^A-Z\\s]+|[A-Z]{2,}|([A-Z][^A-Z\\s]+)|([A-Z]\\s*$)");
-        List<String> queries = new ArrayList<>();
-        Matcher matcher = pattern.matcher(query);
-        while (matcher.find()) {
-            queries.add(matcher.group());
-        }
-        return queries;
+        final int _start = start;
+        return new Iterator<String>() {
+            int offset = _start;
+            @Override
+            public boolean hasNext() {
+                return offset < query.length();
+            }
+
+            @Override
+            public String next() {
+                char c = query.charAt(offset);
+                int len;
+                if (Character.isUpperCase(c) && offset + 1 < query.length() && Character.isUpperCase(query.codePointAt(offset + 1))) {
+                    len = 2;
+                    while (offset + len < query.length() && Character.isUpperCase(query.charAt(offset + len))) {
+                        len++;
+                    }
+                } else {
+                    len = 1;
+                    while (offset + len < query.length() && !Character.isSpaceChar(query.charAt(offset + len)) && !Character.isUpperCase(query.charAt(offset + len))) {
+                        len++;
+                    }
+                }
+                String result = query.substring(offset, offset + len);
+                offset += len;
+                // skip white space
+                while (offset < query.length() && Character.isSpaceChar(query.charAt(offset))) {
+                    offset++;
+                }
+                return result;
+            }
+        };
     }
 
     /**
@@ -82,12 +108,12 @@ public class Migemo {
         }
 
         // 文節に分解する
-        List<String> words = parseQuery(query);
+        Iterator<String> words = parseQuery(query);
 
         // 単語群をrxgenオブジェクトに入力し正規表現を得る
         StringBuilder result = new StringBuilder();
-        for (String word : words) {
-            String answer = queryAWord(word);
+        while (words.hasNext()) {
+            String answer = queryAWord(words.next());
             result.append(answer);
         }
         return result.toString();

@@ -2,6 +2,7 @@ package migemo;
 
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -9,43 +10,53 @@ import static org.junit.Assert.*;
 
 public class MigemoTest {
     @Test
-    public void parseQuery_abc() throws Exception {
-        List<String> parsedQuery = Migemo.parseQuery("abc");
-        assertEquals(1, parsedQuery.size());
-        assertEquals("abc", parsedQuery.get(0));
+    public void parseQuery_abc() {
+        Iterator<String> iterator = Migemo.parseQuery("abc");
+        assertTrue(iterator.hasNext());
+        assertEquals("abc", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
-    public void parseQuery_aBc() throws Exception {
-        List<String> parsedQuery = Migemo.parseQuery("aBc");
-        assertEquals(2, parsedQuery.size());
-        assertEquals("a", parsedQuery.get(0));
-        assertEquals("Bc", parsedQuery.get(1));
+    public void parseQuery_aBc() {
+        Iterator<String> iterator = Migemo.parseQuery("aBc");
+        assertTrue(iterator.hasNext());
+        assertEquals("a", iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals("Bc", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
-    public void parseQuery_ABc() throws Exception {
-        List<String> parsedQuery = Migemo.parseQuery("ABc");
-        assertEquals(2, parsedQuery.size());
-        assertEquals("AB", parsedQuery.get(0));
-        assertEquals("c", parsedQuery.get(1));
+    public void parseQuery_ABc() {
+        Iterator<String> iterator = Migemo.parseQuery("ABc");
+        assertTrue(iterator.hasNext());
+        assertEquals("AB", iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals("c", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
     public void parseQuery_renbunsetu() {
-        List<String> parsedQuery = Migemo.parseQuery("renbunsetuNoKensaku");
-        assertEquals(3, parsedQuery.size());
-        assertEquals("renbunsetu", parsedQuery.get(0));
-        assertEquals("No", parsedQuery.get(1));
-        assertEquals("Kensaku", parsedQuery.get(2));
+        Iterator<String> iterator = Migemo.parseQuery("renbunsetuNoKensaku");
+        assertTrue(iterator.hasNext());
+        assertEquals("renbunsetu", iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals("No", iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals("Kensaku", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
     public void parseQuery_aA() {
-        List<String> parsedQuery = Migemo.parseQuery("aA");
-        assertEquals(2, parsedQuery.size());
-        assertEquals("a", parsedQuery.get(0));
-        assertEquals("A", parsedQuery.get(1));
+        Iterator<String> iterator = Migemo.parseQuery("aA");
+        assertTrue(iterator.hasNext());
+        assertEquals("a", iterator.next());
+        assertTrue(iterator.hasNext());
+        assertEquals("A", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
