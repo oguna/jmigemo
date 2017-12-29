@@ -4,49 +4,16 @@ import java.util.Objects;
 
 public class RegexGenerator {
     private static class Node {
-        final char code;
-        Node child;
-        Node next;
+        private final char code;
+        private Node child;
+        private Node next;
 
         private Node(char code) {
             this.code = code;
         }
-
-        Node add(String query, int offset, boolean generated) {
-            Objects.requireNonNull(query);
-            char code = query.charAt(offset);
-            Node node = this;
-            // codeを持つノードを探す
-            while (node != null && node.code != code) {
-                node = node.next;
-            }
-            // codeを持つノードが無い場合、作成追加する
-            boolean a = false;
-            if (node == null) {
-                node = new Node(code);
-                node.next = this;
-                a = true;
-            } else if (node.child == null && !generated) {
-                // codeを持つノードは有るが、その子供が無い場合、それ以降の入力パターンは破棄する
-                return this;
-            }
-            if (query.length() == offset + 1) {
-                // 入力パターンが尽きたら終了
-                // 入力パターンよりも長い既存パターンは破棄する
-                node.child = null;
-            } else {
-                generated = false;
-                if (node.child == null) {
-                    node.child = new Node(query.charAt(1 + offset));
-                    generated = true;
-                }
-                node.child = node.child.add(query, offset + 1, generated);
-            }
-            return a ? node : this;
-        }
     }
 
-    private Node node;
+    private Node root;
 
     private final RegexOperator operator;
 
@@ -63,12 +30,59 @@ public class RegexGenerator {
         if (word.isEmpty()) {
             return;
         }
-        boolean generated = false;
-        if (this.node == null) {
-            this.node = new Node(word.charAt(0));
-            generated = true;
+        this.root = add(this.root, word, 0);
+    }
+
+    private static Node add(Node node, String word, int offset) {
+        if (node == null) {
+            if (offset >= word.length()) {
+                return null;
+            }
+            node = new Node(word.charAt(offset));
+            if (offset < word.length() - 1) {
+                node.child = add(null, word, offset + 1);
+            }
+            return node;
         }
-        this.node = this.node.add(word, 0, generated);
+        Node thisNode = node;
+        char code = word.charAt(offset);
+        // 兄弟ノードから同じcodeのノードを探す
+        if (code < node.code) {
+            // 先頭ノードがcodeより大きいので、先頭に挿入
+            Node newNode = new Node(code);
+            newNode.next = node;
+            node = newNode;
+            if (offset < word.length()) {
+                node.child = add(null, word, offset + 1);
+            }
+            thisNode = node;
+        } else {
+            // codeと同じか、codeより小さい最大のノードを探す
+            while (node.next != null && node.next.code <= code) {
+                node = node.next;
+            }
+            if (node.code == code) {
+                // 同じcodeのノードを見つけた
+                if (node.child == null) {
+                    // 以降の文字は追加しない
+                    return thisNode;
+                }
+            } else {
+                // codeより小さい最大のノードを見つけた
+                Node newNode = new Node(code);
+                newNode.next = node.next;
+                node.next = newNode;
+                node = newNode;
+            }
+            if (word.length() == offset + 1) {
+                // 入力パターンが尽きたら終了
+                // 入力パターンよりも長い既存パターンは破棄する
+                node.child = null;
+                return thisNode;
+            }
+            node.child = add(node.child, word, offset + 1);
+        }
+        return thisNode;
     }
 
     private void generateStub(StringBuilder buf, Node node) {
@@ -147,11 +161,11 @@ public class RegexGenerator {
     }
 
     public String generate() {
-        if (this.node == null) {
+        if (this.root == null) {
             return null;
         } else {
             StringBuilder sb = new StringBuilder();
-            generateStub(sb, this.node);
+            generateStub(sb, this.root);
             return sb.toString();
         }
     }
