@@ -72,23 +72,24 @@ public class LOUDSTrieBuilder {
         for (int i = 0; i < memo.length; i++) {
             memo[i] = -memo[i];
         }
-        BitSet bitSet = new BitSet();
-        bitSet.set(0, true);
-        int bitVectorSize = 1;
+        int numOfChildren = 0;
         for (int i = 1; i <= currentNode; i++) {
-            bitSet.set(bitVectorSize, false);
-            bitVectorSize++;
+            numOfChildren += childSizes[i];
+        }
+        int numOfNodes = currentNode;
+        long[] bitVectorWords = new long[(numOfChildren + numOfNodes + 63 + 1) / 64];
+        int bitVectorIndex = 1;
+        bitVectorWords[0] = 1;
+        for (int i = 1; i <= currentNode; i++) {
+            bitVectorIndex++;
             int childSize = childSizes[i];
             for (int j = 0; j < childSize; j++) {
-                bitSet.set(bitVectorSize, true);
-                bitVectorSize++;
+                bitVectorWords[bitVectorIndex >> 6] |= 1 << (bitVectorIndex & 63);
+                bitVectorIndex++;
             }
         }
-        long[] bitVectorWords = bitSet.toLongArray();
-        if ((bitVectorSize + 63) / 64 != bitVectorWords.length) {
-            bitVectorWords = Arrays.copyOf(bitVectorWords, (bitVectorSize + 63) / 64);
-        }
-        BitVector bitVector = new BitVector(bitVectorWords, bitVectorSize);
+
+        BitVector bitVector = new BitVector(bitVectorWords, bitVectorIndex);
         return new LOUDSTrie(bitVector, edges.toString().toCharArray());
     }
 }
