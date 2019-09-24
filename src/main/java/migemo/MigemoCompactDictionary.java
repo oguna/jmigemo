@@ -1,6 +1,8 @@
 package migemo;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MigemoCompactDictionary {
@@ -84,7 +86,9 @@ public class MigemoCompactDictionary {
     }
 
     public static void main(String[] args) throws IOException {
-        //build(new FileReader(new File(args[0])));
+        try (FileReader fr = new FileReader(new File(args[0]), StandardCharsets.UTF_8)) {
+            build(fr);
+        }
         long start = System.currentTimeMillis();
         MigemoCompactDictionary dic = new MigemoCompactDictionary(new BufferedInputStream(new FileInputStream("migemo-compact-dict")));
         long end = System.currentTimeMillis();
