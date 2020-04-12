@@ -16,7 +16,7 @@ public class MigemoDictionary {
     }
 
     public void loadDefault() {
-        try (InputStream is = MigemoDictionary.class.getResourceAsStream("/migemo-compact-dict");
+        try (InputStream is = MigemoDefaultCompactDictionary.getStream();
              BufferedInputStream bis = new BufferedInputStream(is)) {
             this.compactDictionary = new MigemoCompactDictionary(bis);
         } catch (IOException e) {

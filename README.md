@@ -1,21 +1,29 @@
-# J/Migemo
+# jmigemo
 
-J/Migemo is a pure java library implementing [Migemo](http://0xcc.net/migemo/).
+jmigemoは、ローマ字のまま日本語をインクリメンタル検索するためのツールであるMigemoを、Javaで実装したものです。
 
-## Sample
+Migemoの実行には辞書ファイルが必要です。
+[jmigemo-dict](https://github.com/oguna/jmigemo-dict/tree/v0.1.0) から辞書ファイルを含んだJarファイルをダウンロードできます。
 
-When you want to search `郵便局`, you just have to type `yuubink` for it.
+Javaプロジェクトの依存関係にJarファイルを追加します。
+以下のコードはGradleの場合です。
 
+```gradle
+...
+dependencies {
+    ...
+    compile files('jmigemo-dict-0.1.0.jar')
+}
 ```
-QUERY: yuubink
-PATTERN: (郵便([区局]|小(包|為替)|口座|切手|為替)|ﾕｳﾋﾞﾝ([ｸｺｷｹｶ]|ｯ[ｸｺｷｹｶ])|ユウビン([クコキケカ]|ッ[クコキケカ])|ゆうびん([くこきけか]|っ[くこきけか])|ｙｕｕｂｉｎｋ|yuubink)
+
+依存関係に追加後、Javaプログラムでは以下のようにして使用します。
+
+```java
+Migemo migemo = new Migemo();
+MigemoDictionary dictionary = new MigemoDictionary();
+dictionary.build();
+migemo.setDictionary(dictionary);
+migemo.setOperator(RegexOperator.DEFAULT);
+String regex = migemo.query("kikai");
+// => "(kikai|きかい|キカイ|喜界|器械|奇怪|既会員|棋界|機[会械]|毀壊|気塊|貴会|ｋｉｋａｉ|ｷｶｲ)"
 ```
-
-You can also search a sequence of phrases
-
-## License
-
-All java code in this project are under **Public Domain (CC0)**.
-
-This project contains SKK dictionary, so built jar file will be under **GPL**.
-Read [the document](http://openlab.jp/skk/skk/main/READMEs/COPYING).
