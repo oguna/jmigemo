@@ -1,7 +1,6 @@
 package migemo;
 
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Objects;
 
 public class LOUDSTrieBuilder {

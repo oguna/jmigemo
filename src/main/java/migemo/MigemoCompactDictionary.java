@@ -1,7 +1,6 @@
 package migemo;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -93,10 +92,11 @@ public class MigemoCompactDictionary {
         MigemoCompactDictionary dic = new MigemoCompactDictionary(new BufferedInputStream(new FileInputStream("migemo-compact-dict")));
         long end = System.currentTimeMillis();
         System.out.println("load compact dictionary: " + (end - start));
-        Scanner scanner = new Scanner(System.in);
-        String line;
-        while ((line = scanner.nextLine()) != null && !line.isEmpty()) {
-            System.out.println(Arrays.toString(dic.predictiveSearch(line)));
+        try (Scanner scanner = new Scanner(System.in)) {
+            String line;
+            while ((line = scanner.nextLine()) != null && !line.isEmpty()) {
+                System.out.println(Arrays.toString(dic.predictiveSearch(line)));
+            }
         }
     }
 

@@ -114,7 +114,6 @@ public class RomajiProcessor {
     }
 
     private static Set<RomanEntry> findRomanEntryPredicatively(String string, int offset) {
-        int lastFound = -1;
         int startIndex = 0;
         int endIndex = ROMAN_INDEXES.length;
         for (int i = 0; i < 4; i++) {
@@ -123,9 +122,7 @@ public class RomajiProcessor {
             }
             int startKey = calculateRomanIndex(string, offset, offset + i + 1);
             startIndex = Arrays.binarySearch(ROMAN_INDEXES, startIndex, endIndex, startKey);
-            if (startIndex >= 0) {
-                lastFound = startIndex;
-            } else {
+            if (startIndex < 0) {
                 startIndex = -startIndex - 1;
             }
             int endKey = startKey + (1 << (24 - 8 * i));

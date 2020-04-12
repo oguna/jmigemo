@@ -17,7 +17,9 @@ public class CharacterConverterTest {
         }
     }
 
-    private static final Map<Character, Character> hira2kata = new HashMap<Character, Character>() {{
+    private static final Map<Character, Character> hira2kata = new HashMap<Character, Character>() {
+        private static final long serialVersionUID = 1L;
+        {
         put('あ', 'ア');
         put('い', 'イ');
         put('う', 'ウ');

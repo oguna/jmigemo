@@ -1,8 +1,6 @@
 package migemo;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Migemo {
     public final static String VERSION = "1.3";

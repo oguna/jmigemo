@@ -29,7 +29,10 @@ public class CharacterConverter {
         return sb.toString();
     }
 
-    private static final Map<Character, Character> han2zen = new HashMap<Character, Character>() {{
+    private static final Map<Character, Character> han2zen = new HashMap<Character, Character>() {
+        private static final long serialVersionUID = 1L;
+
+        {
         put('!', '！');
         put('"', '”');
         put('#', '＃');
@@ -189,7 +192,10 @@ public class CharacterConverter {
         put('ﾟ', '゜');
     }};
 
-    private static final Map<Character, String> zen2han = new HashMap<Character, String>() {{
+    private static final Map<Character, String> zen2han = new HashMap<Character, String>() {
+        private static final long serialVersionUID = 1L;
+
+        {
         put('！', "!");
         put('”', "\"");
         put('＃', "#");
