@@ -91,8 +91,9 @@ public class Main {
                 dictionary = new MigemoCompactDictionary(is);
             }
         } else {
-            try (InputStream is = new FileInputStream(dict)) {
-                dictionary = new MigemoCompactDictionary(is);
+            try (InputStream is = new FileInputStream(dict);
+                BufferedInputStream bis = new BufferedInputStream(is)) {
+                dictionary = new MigemoCompactDictionary(bis);
             }
         }
 
