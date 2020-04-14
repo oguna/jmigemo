@@ -86,8 +86,8 @@ public class RegexGenerator {
     }
 
     private void generateStub(StringBuilder buf, Node node) {
-        String escapeCharacters = "\\.[]{}()*+-?^$|";
-        char escape = '\\';
+        final String ESCAPE_CHARACTERS = "\\.[]{}()*+-?^$|";
+        final char ESCAPE = '\\';
         // 現在の階層の特性(兄弟の数、子供の数)をチェックする
         int brother = 1;
         int haschild = 0;
@@ -115,8 +115,8 @@ public class RegexGenerator {
                 if (tmp.child != null) {
                     continue;
                 }
-                if (escapeCharacters.indexOf(tmp.code) != -1) {
-                    buf.append('\\');
+                if (ESCAPE_CHARACTERS.indexOf(tmp.code) != -1) {
+                    buf.append(ESCAPE);
                 }
                 buf.append(tmp.code);
             }
@@ -135,8 +135,8 @@ public class RegexGenerator {
             for (tmp = node; tmp.child == null; tmp = tmp.next) {
             }
             while (true) {
-                if (escapeCharacters.indexOf(tmp.code) != -1) {
-                    buf.append('\\');
+                if (ESCAPE_CHARACTERS.indexOf(tmp.code) != -1) {
+                    buf.append(ESCAPE);
                 }
                 buf.append(tmp.code);
                 // 空白・改行飛ばしのパターンを挿入
