@@ -80,7 +80,7 @@ public class MigemoCompactDictionary {
             }
             return result.toArray(new String[0]);
         } else {
-            return null;
+            return new String[0];
         }
     }
 

@@ -6,7 +6,7 @@ public class Migemo {
     public final static String VERSION = "1.3";
 
     private RegexOperator operator = RegexOperator.DEFAULT;
-    private MigemoDictionary dictionary;
+    private MigemoCompactDictionary dictionary;
 
     /**
      * queryを文節に分解する。
@@ -121,7 +121,7 @@ public class Migemo {
         this.operator = operator;
     }
 
-    public void setDictionary(MigemoDictionary dictionary) {
+    public void setDictionary(MigemoCompactDictionary dictionary) {
         this.dictionary = dictionary;
     }
 }

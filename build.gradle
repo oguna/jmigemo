@@ -1,15 +1,12 @@
 version '0.1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'application'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 compileJava.options.encoding = 'UTF-8'
 compileTestJava.options.encoding = 'UTF-8'
-
-mainClassName = "migemo.Main"
 
 repositories {
     mavenCentral()
@@ -23,18 +20,11 @@ dependencies {
     compile files('jmigemo-dict-0.1.0.jar')
 }
 
-jar {
-    manifest {
-        attributes "Main-Class" : mainClassName
-    }
-}
-
-task executableJar(type: Jar, dependsOn: jar)  {
+task cliJar(type: Jar, dependsOn: jar)  {
     archiveName = "jmigemo-cli-" + version + ".jar"
     manifest {
-        attributes 'Main-Class' : mainClassName
+        attributes 'Main-Class' : 'migemo/Main'
     }
-
-    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
     from "$buildDir/classes/java/main"
+    from configurations.compile.collect {it.isDirectory() ? it : zipTree(it)}
 }

@@ -2,6 +2,8 @@ package migemo;
 
 import org.junit.Test;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
@@ -108,9 +110,12 @@ public class MigemoTest {
 
     private static Migemo createMigemo() {
         Migemo migemo = new Migemo();
-        MigemoDictionary dictionary = new MigemoDictionary();
-        dictionary.loadDefault();
-        dictionary.build();
+        MigemoCompactDictionary dictionary;
+        try (InputStream is = MigemoDefaultCompactDictionary.getStream() ) {
+            dictionary = new MigemoCompactDictionary(is);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         migemo.setDictionary(dictionary);
         return migemo;
     }

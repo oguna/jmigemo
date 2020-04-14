@@ -2,6 +2,12 @@
 
 jmigemoは、ローマ字のまま日本語をインクリメンタル検索するためのツールであるMigemoを、Javaで実装したものです。
 
+| package | |
+| ---- | ---- |
+| jmigemo | Migemo本体 |
+| jmigemo-dict | Migemo用の辞書 |
+| jmigemo-cli | Migemo本体と辞書を同梱 |
+
 ## 使い方
 
 Migemoの実行には辞書ファイルが必要です。
@@ -22,8 +28,12 @@ dependencies {
 
 ```java
 Migemo migemo = new Migemo();
-MigemoDictionary dictionary = new MigemoDictionary();
-dictionary.build();
+MigemoCompactDictionary dictionary;
+try (InputStream is = MigemoDefaultCompactDictionary.getStream() ) {
+    dictionary = new MigemoCompactDictionary(is);
+} catch (IOException e) {
+    throw new RuntimeException(e);
+}
 migemo.setDictionary(dictionary);
 migemo.setOperator(RegexOperator.DEFAULT);
 String regex = migemo.query("kikai");
@@ -35,7 +45,7 @@ String regex = migemo.query("kikai");
 辞書ファイルを同梱したJARファイルは、以下のコマンドで作成できます。
 
 ```
-> ./gradlew executableJar
+> ./gradlew cliJar
 > java -jar .\build\libs\jmigemo-cli-0.1.0-SNAPSHOT.jar -q -w kensaku
 (kensaku|けんさく|ケンサク|建策|憲[作冊]|検索|献策|研削|羂索|ｋｅｎｓａｋｕ|ｹﾝｻｸ)
 ```

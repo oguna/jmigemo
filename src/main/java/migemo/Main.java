@@ -1,13 +1,9 @@
 package migemo;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
-    private static final String ABOUT = "jmigemo - J/Migemo Library " + Migemo.VERSION + " Driver";
-    private static final String DICT_NAME = "migemo-dict";
-    private static final int SUBDICT_MAX = 8;
+    private static final String ABOUT = "jmigemo";
 
     private static void queryLoop(Migemo migemo, boolean quiet) throws IOException {
         try (InputStreamReader isr = new InputStreamReader(System.in);
@@ -36,14 +32,13 @@ public class Main {
                         "\n" +
                         "OPTIONS:\n" +
                         "  -d --dict <dict>	Use a file <dict> for dictionary.\n" +
-                        "  -s --subdict <dict>	Sub dictionary files. (MAX %d times)\n" +
                         "  -q --quiet		Show no message except results.\n" +
                         "  -v --vim		Use vim style regexp.\n" +
                         "  -e --emacs		Use emacs style regexp.\n" +
                         "  -n --nonewline	Don't use newline match.\n" +
                         "  -w --word <word>	Expand a <word> and soon exit.\n" +
                         "  -h --help		Show this message.\n"
-                , ABOUT, name, SUBDICT_MAX);
+                , ABOUT, name);
     }
 
     public static void main(String[] args) throws IOException {
@@ -51,11 +46,10 @@ public class Main {
         boolean mode_emacs = false;
         boolean mode_nonewline = false;
         boolean mode_quiet = false;
-        List<String> subdicts = new ArrayList<>();
         String dict = null;
         String word = null;
-        PrintStream fplog = System.out;
-        String prgname = Migemo.class.getSimpleName();
+        final PrintStream fplog = System.out;
+        final String prgname = Migemo.class.getSimpleName();
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             switch (arg) {
@@ -75,11 +69,6 @@ public class Main {
                 case "-d":
                     dict = args[++i];
                     break;
-                case "--subdict":
-                case "-s":
-                    if (subdicts.size() < SUBDICT_MAX) {
-                        subdicts.add(arg);
-                    }
                 case "--word":
                 case "-w":
                     word = args[++i];
@@ -95,43 +84,19 @@ public class Main {
             }
         }
 
-        Migemo migemo = new Migemo();
-
-        // 辞書をカレントディレクトリと1つ上のディレクトリから捜す
-        MigemoDictionary dictionary = new MigemoDictionary();
+        // 辞書ファイルの読み込み
+        final MigemoCompactDictionary dictionary;
         if (dict == null) {
-            File currentDirDict = new File("./dict/" + DICT_NAME);
-            File parentDirDict = new File("../dict/" + DICT_NAME);
-            if (currentDirDict.exists()) {
-                dictionary.load(currentDirDict);
-                if (word == null && !mode_quiet) {
-                    fplog.printf("migemo_open(%s)=%s\n", "./dict/" + DICT_NAME, migemo);
-                }
-            } else if (parentDirDict.exists()) {
-                dictionary.load(parentDirDict);
-                if (word == null && !mode_quiet) {
-                    fplog.printf("migemo_open(\"%s\")=%s\n", "../dict/" + DICT_NAME, migemo);
-                }
-            } else {
-                dictionary.loadDefault();
+            try (InputStream is = MigemoDefaultCompactDictionary.getStream()) {
+                dictionary = new MigemoCompactDictionary(is);
             }
         } else {
-            dictionary.load(new File(dict));
-            if (word == null && !mode_quiet) {
-                fplog.printf("migemo_open(%s)=%s\n", dict, migemo);
-            }
-        }
-        // サブ辞書を読み込む
-        if (subdicts.size() > 0) {
-            for (String subdict : subdicts) {
-                dictionary.load(new File(subdict));
-                if (word != null && !mode_quiet) {
-                    fplog.printf("migemo_load(%s, \"%s\")\n", migemo, subdict);
-                }
+            try (InputStream is = new FileInputStream(dict)) {
+                dictionary = new MigemoCompactDictionary(is);
             }
         }
 
-        dictionary.build();
+        final Migemo migemo = new Migemo();
         migemo.setDictionary(dictionary);
 
         if (mode_vim) {
@@ -148,14 +113,11 @@ public class Main {
             }
         }
         if (word != null) {
-            String ans = migemo.query(word);
+            final String ans = migemo.query(word);
             if (ans != null) {
                 fplog.printf(mode_vim ? "%s" : "%s\n", ans);
             }
         } else {
-            if (!mode_quiet) {
-                System.out.printf("clock()=%f\n", System.currentTimeMillis() / 1000d);
-            }
             queryLoop(migemo, mode_quiet);
         }
     }
