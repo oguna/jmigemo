@@ -83,7 +83,7 @@ public class LOUDSTrieBuilder {
             bitVectorIndex++;
             int childSize = childSizes[i];
             for (int j = 0; j < childSize; j++) {
-                bitVectorWords[bitVectorIndex >> 6] |= 1 << (bitVectorIndex & 63);
+                bitVectorWords[bitVectorIndex >> 6] |= 1L << (bitVectorIndex & 63);
                 bitVectorIndex++;
             }
         }
